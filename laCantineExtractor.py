@@ -21,7 +21,7 @@ def get_regexp_in_html(url,regexp):
 	req = urllib2.Request(url, None, headers)
 	html = urllib2.urlopen(req).read()
 	result = regexp.findall(html)
-	#Yes I kn
+	#Yes I know
 	return result[0]
 
 
