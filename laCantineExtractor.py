@@ -1,6 +1,7 @@
 import urllib2
 import re
 import sys
+import requests
 
 #Modes Url
 mode_url = "http://lacantine.ubicast.eu/videos/modes/"
@@ -9,7 +10,6 @@ headers = { 'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.
 
 #Regexp
 media_id_regexp = re.compile('media_id: "(.*)",')
-youtube_url_regexp = re.compile('{"file": "(.*)"}}, "name":')
 
 """
 Return the first match of regexp past in param on the url given
@@ -18,12 +18,15 @@ Param :
 	-regexp : a compiled regexp
 """
 def get_regexp_in_html(url,regexp):
-	req = urllib2.Request(url, None, headers)
-	html = urllib2.urlopen(req).read()
+        html = requests.get(url, headers=headers).text
 	result = regexp.findall(html)
 	#Yes I know
 	return result[0]
 
+
+def get_youtube_url(url):
+    content = requests.get(url)
+    return content.json()['modes']['youtube']['flash']['params']['file']
 
 if __name__ == '__main__':
 	if len(sys.argv) == 2 :
@@ -38,6 +41,6 @@ if __name__ == '__main__':
 	#Building the url
 	url = mode_url  + media_id
 	#Getting the youtube url
-	youtube_url = get_regexp_in_html(url,youtube_url_regexp)
+	youtube_url = get_youtube_url(url)
 
 	print youtube_url
